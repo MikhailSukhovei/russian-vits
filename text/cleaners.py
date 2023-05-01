@@ -102,17 +102,37 @@ def english_cleaners2(text):
   
 
 def russian_cleaners(text):
-	'''Pipeline for Russian text.'''
-	text = lowercase(text)
-	text = text.replace(' - ', '—')
-	phonemes = phonemize(
-		text,
-		language='ru',
-		backend='espeak',
-		separator=Separator(phone=None, word=' ', syllable='|'),
-		strip=True,
-		preserve_punctuation=True,
-		njobs=4
-	)
-	phonemes = collapse_whitespace(phonemes)
-	return phonemes
+  '''Pipeline for Russian text.'''
+  # text = convert_to_ascii(text)
+  text = lowercase(text)
+  text = text.replace(' - ', '—')
+  text = text.replace('ё', 'е')
+
+  # incorrect (non-softened) consonants before "ь" at the end of a word
+  # https://github.com/espeak-ng/espeak-ng/issues/1045
+  words = re.sub("[!,.?—]", "", text).split(" ")
+  error_palatalization = ['бь', 'вь', 'гь', 'кь', 'ль', 'нь', 'пь', 'фь']
+  fix_palatalization = [w[-2:] in error_palatalization for w in words]
+
+  print(words)
+  print(text)
+  phonemes = phonemize(
+    text,
+    language='ru',
+    backend='espeak',
+    separator=Separator(phone=None, word=' ', syllable='|'),
+    strip=True,
+    preserve_punctuation=True
+  )
+  phonemes = collapse_whitespace(phonemes)
+
+  # incorrect (non-softened) consonants before "ь" at the end of a word
+  # https://github.com/espeak-ng/espeak-ng/issues/1045
+  phonemes_words = re.sub("[!,.?—]", "", phonemes).split(" ")
+  print(phonemes_words)
+  for fix, w in zip(fix_palatalization, phonemes_words):
+    if fix:
+      phonemes = phonemes.replace(w, w + "ʲ")
+
+  return phonemes
+
