@@ -15,6 +15,7 @@ hyperparameter. Some cleaners are English-specific. You'll typically want to use
 import re
 from unidecode import unidecode
 from phonemizer import phonemize
+from phonemizer.separator import Separator
 
 
 # Regular expression matching whitespace:
