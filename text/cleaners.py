@@ -103,7 +103,6 @@ def english_cleaners2(text):
 
 def russian_cleaners(text):
 	'''Pipeline for Russian text.'''
-	text = convert_to_ascii(text)
 	text = lowercase(text)
 	text = text.replace(' - ', '—')
 	phonemes = phonemize(
