@@ -106,6 +106,9 @@ def russian_cleaners(text):
   # text = convert_to_ascii(text)
   text = lowercase(text)
   text = text.replace(' - ', '—')
+  text = text.replace(':', '—')
+  text = text.replace(';', ',')
+  text = text.replace(' - ', '—')
   text = text.replace('ё', 'е')
 
   # incorrect (non-softened) consonants before "ь" at the end of a word
@@ -114,8 +117,6 @@ def russian_cleaners(text):
   error_palatalization = ['бь', 'вь', 'гь', 'кь', 'ль', 'нь', 'пь', 'фь']
   fix_palatalization = [w[-2:] in error_palatalization for w in words]
 
-  print(words)
-  print(text)
   phonemes = phonemize(
     text,
     language='ru',
